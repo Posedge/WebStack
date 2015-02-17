@@ -21,11 +21,11 @@ function renderStack(stack){
   // draw stack in reverse order as the last element represents the top
   for(var i = stack.frames.length - 1; i >= 0; i--){
     frame = stack.frames[i];
-    elementContent += "<div class=\"stack-frame\">";
+    elementContent += '<div class="stack-frame">';
     for(var j = 0; j < frame.tabObjects.length; j++){
-      elementContent += frame.tabObjects[j].title + "<br>";
+      elementContent += '<div class="tab-favicon-container" title="' + frame.tabObjects[j].title + '"><img class="tab-favicon-img" src="' + frame.tabObjects[j].favUrl + '" alt="' + frame.tabObjects[j].title + '" /></div>';
     }
-    elementContent += "</div>";
+    elementContent += '</div>';
   }
   
   $("#stack").html(elementContent);

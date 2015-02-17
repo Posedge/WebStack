@@ -54,17 +54,30 @@ body {
 }
 
 #stack {
-  width: 400px;
-  max-width: 400px;
+  display: inline-block;
   height: 200px;
   padding: 3px;
 }
 
 div.stack-frame {
-  max-width: 400px;
-  padding: 5px;
+  width: 336px;
   margin: 5px;
   border: 2px solid;
   border-radius: 5px;
+}
+
+div.tab-favicon-container {
+  background-color: #E8E8E8;
+  display: inline-block;
+  border: 2px solid #E8E8E8;
+  border-radius: 8px;
+  width: 48px;
+  height: 48px;
+  margin: 2px;
+}
+
+img.tab-favicon-img {
+  width: 100%;
+  height: 100%;
 }
 
