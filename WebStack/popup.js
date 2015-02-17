@@ -3,7 +3,7 @@
  * If there is none, create new stack.
  */
 function getStack(callback){
-  chrome.storage.sync.get({'stack': null}, function(result){
+  chrome.storage.sync.get({stack: null}, function(result){
     stack = result.stack === null ? {frames: []} : result.stack;
     callback(stack);
   });
@@ -13,7 +13,7 @@ function getStack(callback){
  * Update stack object, then call callback.
  */
 function setStack(stack, callback){
-  chrome.storage.sync.set({"stack": stack}, callback);
+  chrome.storage.sync.set({stack: stack}, callback);
 }
 
 function renderStack(stack){
@@ -22,8 +22,8 @@ function renderStack(stack){
   for(var i = stack.frames.length - 1; i >= 0; i--){
     frame = stack.frames[i];
     elementContent += "<div class=\"stack-frame\">";
-    for(var j = 0; j < frame.tabs.length; j++){
-      elementContent += frame.tabs[j] + "<br>";
+    for(var j = 0; j < frame.tabObjects.length; j++){
+      elementContent += frame.tabObjects[j].title + "<br>";
     }
     elementContent += "</div>";
   }
@@ -32,7 +32,7 @@ function renderStack(stack){
 }
 
 /**
- * Push all opened and non-pinned tabs in this window to our stack. // TODO and close them
+ * Push all opened and non-pinned tabs in this window to our stack.
  */
 function push(){
   // get tabs
@@ -41,18 +41,32 @@ function push(){
     currentWindow: true
   }
   chrome.tabs.query(queryInfo, function(tabs){
-    urls = tabs.map(function(tab){
-      return tab.url;
+    // if no tab is opened, do not do anything
+    if (tabs.length === 0) return;
+
+    // create objects for each tab, containing url, title, and favicon
+    tabObjects = tabs.map(function(tab){
+      return {
+        url: tab.url,
+        title: tab.title,
+        favUrl: tab.favIconUrl
+      }
     });
+
     // place on stack
     getStack(function(stack){
       frame = {
-        tabs: urls 
+        tabObjects: tabObjects 
       }
       stack.frames.push(frame);
       setStack(stack, function(){
         renderStack(stack);
       });
+    });
+
+    // close tabs
+    tabs.forEach(function(tab){
+      chrome.tabs.remove(tab.id);
     });
   });  
 }
@@ -62,11 +76,14 @@ function push(){
  */
 function pop(){
   getStack(function(stack){
+    if (stack.frames.length == 0){
+      return; // stack is empty.
+    }
     frame = stack.frames.pop();
-
+    
     // open tabs
-    for(var i = 0; i < frame.tabs.length; i++){
-      chrome.tabs.create({url: frame.tabs[i], active: false, selected: false});
+    for(var i = 0; i < frame.tabObjects.length; i++){
+      chrome.tabs.create({url: frame.tabObjects[i].url, active: false, selected: false});
     }
     
     // update stack object
