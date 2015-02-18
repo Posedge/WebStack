@@ -9,8 +9,11 @@ As of now, you can only install this for chrome locally. To do that, download an
 ### TODO list
 
 - [x] Ignore empty tabs
-- [ ] Allow deleting/opening tabs
 - [ ] Fix favicon when pushed before the site has loaded
-- [ ] Add proper icon(s) and stylesheets
+- [ ] Allow deleting/opening tabs
 - [ ] Allow reordering of Tabs
+- [ ] Add Badge displaying number of items
+- [ ] Save and restore the browsing history with the tab
+- [ ] Add proper icon(s) and stylesheets
+- [ ] Make this more accessible to the average user (rename "push" and "pop" and rewrite the description)
 

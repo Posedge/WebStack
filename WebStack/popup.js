@@ -68,12 +68,15 @@ function push(){
       stack.frames.push(frame);
       setStack(stack, function(){
         renderStack(stack);
-      });
-    });
 
-    // close tabs
-    allTabs.forEach(function(tab){
-      chrome.tabs.remove(tab.id);
+        // open a new tab so that the window is not closed
+        chrome.tabs.create({});
+
+        // close all other tabs
+        allTabs.forEach(function(tab){
+          chrome.tabs.remove(tab.id);
+        });
+      });
     });
   });  
 }
@@ -86,16 +89,29 @@ function pop(){
     if (stack.frames.length == 0){
       return; // stack is empty.
     }
-    frame = stack.frames.pop();
-    
-    // open tabs
-    for(var i = 0; i < frame.tabObjects.length; i++){
-      chrome.tabs.create({url: frame.tabObjects[i].url, active: false, selected: false});
+
+    var emptyTabsQueryInfo = {
+      pinned: false,
+      currentWindow: true,
+      url: "chrome://newtab/"
     }
-    
-    // update stack object
-    setStack(stack, function(){
-      renderStack(stack);
+    chrome.tabs.query(emptyTabsQueryInfo, function(emptyTabs){  
+      frame = stack.frames.pop();
+      
+      // open tabs
+      for(var i = 0; i < frame.tabObjects.length; i++){
+        chrome.tabs.create({url: frame.tabObjects[i].url, active: false, selected: false});
+      }
+      
+      // close empty tabs
+      emptyTabs.forEach(function(tab){
+        chrome.tabs.remove(tab.id);
+      });
+      
+      // update stack object
+      setStack(stack, function(){
+        renderStack(stack);
+      });
     });
   });
 }
