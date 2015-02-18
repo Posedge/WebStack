@@ -55,6 +55,7 @@ body {
 
 #stack {
   display: inline-block;
+  min-width: 356px;
   height: 200px;
   padding: 3px;
 }

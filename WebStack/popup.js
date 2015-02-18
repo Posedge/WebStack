@@ -40,11 +40,16 @@ function push(){
     pinned: false,
     currentWindow: true
   }
-  chrome.tabs.query(queryInfo, function(tabs){
-    // if no tab is opened, do not do anything
-    if (tabs.length === 0) return;
+  chrome.tabs.query(queryInfo, function(allTabs){
+    function tabIsEmpty(tab){return tab.url === "chrome://newtab/"};
+
+    // if no tab is opened, or all tabs are empty, do not do anything
+    if (allTabs.length === 0 || allTabs.every(tabIsEmpty)){
+      return;
+    }
 
     // create objects for each tab, containing url, title, and favicon
+    tabs = allTabs.filter(function(tab){return !tabIsEmpty(tab)}); // filter out all empty tabs
     tabObjects = tabs.map(function(tab){
       return {
         url: tab.url,
@@ -55,6 +60,8 @@ function push(){
 
     // place on stack
     getStack(function(stack){
+      // Note: "frame" refers to a set of tabs which you move from the current window to the stack and vice versa.
+      // Not the best name, I know.
       frame = {
         tabObjects: tabObjects 
       }
@@ -65,7 +72,7 @@ function push(){
     });
 
     // close tabs
-    tabs.forEach(function(tab){
+    allTabs.forEach(function(tab){
       chrome.tabs.remove(tab.id);
     });
   });  
