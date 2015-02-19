@@ -65,6 +65,7 @@ div.stack-frame {
   margin: 5px;
   border: 2px solid;
   border-radius: 5px;
+  list-style-type: none;
 }
 
 div.tab-favicon-container {
