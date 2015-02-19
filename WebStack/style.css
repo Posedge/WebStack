@@ -60,12 +60,23 @@ body {
   padding: 3px;
 }
 
-div.stack-frame {
-  width: 336px;
+#drop-area {
+  width: 56px;
+  height: 56px;
+  float: right;
   margin: 5px;
   border: 2px solid;
   border-radius: 5px;
-  list-style-type: none;
+  background: url("add-icon.png");
+  background-color: #E8E8E8;
+}
+
+div.stack-frame {
+  width: 336px;
+  min-height: 56px;
+  margin: 5px;
+  border: 2px solid;
+  border-radius: 5px;
 }
 
 div.tab-favicon-container {

@@ -22,7 +22,6 @@ function renderStack(stack){
   for(var i = stack.frames.length - 1; i >= 0; i--){
     frame = stack.frames[i];
     elementContent += '<div class="stack-frame" id="frame-' + i + '">';
-    //frame.tabObjects.forEach(function(tab){
     for(var j = 0; j < frame.tabObjects.length; j++){
       tab = frame.tabObjects[j];
       elementContent += '<div class="tab-favicon-container" title="' + tab.title + '" id="frame-' + i + '-tab-' + j + '">';
@@ -31,28 +30,24 @@ function renderStack(stack){
     };
     elementContent += '</div>';
   }
-  
-  $("#stack").html(elementContent);
 
+  $("#stack").html(elementContent);
+  $("#drop-area").hide(0); // hide drop area
+
+  // these have to be updated (set to sortable) when the stack is rendered, because their content often changes.
   $("#stack").sortable({
     update: rebuildStackFromHtml
   });
-
   $(".stack-frame").sortable({
-    connectWith: ".stack-frame",
-    //stop: rebuildStackFromHtml,
-    update: rebuildStackFromHtml
-    /*function(event, ui){
-      console.log("sortable-start");
-      getStack(function(stack){
-        stack.frames.push({tabObjects: []});
-        setStack(stack, function(){
-          renderStack(stack);
-        });
-      });
-    }*/
+    connectWith: ".stack-frame, #drop-area",
+    stop: rebuildStackFromHtml,
+    start: function(){$("#drop-area").show(0);}
   });
-
+  $("#drop-area").sortable({
+    connectWith: ".stack-frame, #drop-area",
+    start: function(){$("#drop-area").show(0);}
+  });
+  $("#drop-area").disableSelection();
   $(".stack-frame").disableSelection();
   $(".tab-favicon-container").disableSelection();
 }
@@ -62,8 +57,19 @@ function renderStack(stack){
  * Called, when the user changes the order of the frames or tabs (through drag-and-drop).
  */
 function rebuildStackFromHtml(){
-  // TODO for some reason, this is sometimes called TWICE. Fix this (but it works fine though)
   var framesArray = $("#stack").sortable("toArray");
+
+  /**
+   * Parse string with the html id of the tab element, and return an array with the frame and tab index.
+   */
+  function parseTabId(string){
+    var id = string.split("-");
+    if(id.length != 4 || id[0] !== "frame" || id[2] !== "tab"){
+      console.log("WebStack: Reorder failure!");
+      return;
+    }
+    return [parseInt(id[1]), parseInt(id[3])];
+  }
 
   // re-build stack in new order.
   getStack(function(stack){
@@ -74,19 +80,24 @@ function rebuildStackFromHtml(){
 
       var tabObjects = [];
       for (var j = 0; j < tabsArray.length; j++){
-        var parsedId = tabsArray[j].split("-");
-        if(parsedId.length != 4 || parsedId[0] !== "frame" || parsedId[2] !== "tab"){
-          console.log("WebStack: Reorder failure!");
-          return;
-        }
-
-        var f = parseInt(parsedId[1]);
-        var t = parseInt(parsedId[3]);
+        var indices = parseTabId(tabsArray[j]);
+        var f = indices[0]; var t = indices[1];
         tabObjects.push(stack.frames[f].tabObjects[t]);
       }
 
       if(tabObjects.length != 0)
         newFrames.push({tabObjects: tabObjects});
+    }
+
+    // if something was in the drop area, put it on the stack.
+    var dropAreaArray = $("#drop-area").sortable("toArray");
+    if (dropAreaArray.length !== 0){
+        var indices = parseTabId(dropAreaArray[0]);
+        var f = indices[0]; var t = indices[1];
+        newFrames.push({tabObjects: [stack.frames[f].tabObjects[t]]});
+        
+        // clear drop area
+        $("#drop-area").html("");
     }
 
     var newStack = {frames: newFrames};

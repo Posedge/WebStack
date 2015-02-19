@@ -14,6 +14,6 @@ As of now, you can only install this for chrome locally. To do that, enable deve
 - [x] Allow reordering of Tabs
 - [ ] Add Badge displaying number of items
 - [ ] Save and restore the browsing history with the tab
-- [ ] Add proper icon(s) and stylesheets
+- [ ] Add proper icon(s) and stylesheets, and fix css disasters
 - [ ] Make this more accessible to the average user (rename "push" and "pop" and rewrite the description)
 
