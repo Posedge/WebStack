@@ -72,7 +72,14 @@ function Frame(tabObjects){
 function TabObject(url, title, favUrl){
   this.url = url;
   this.title = title;
-  this.favUrl = favUrl;
+  if (favUrl === undefined) {
+    // If the tab has not finished loading, there is no favicon Url. In that case we use google shared stuff to get a favicob.
+    // Getting the original favicon and replacing it asynchronously would be very elaborate. For now this will do fine
+    var hostname = url.match(/:\/\/(.[^/]+)/)[1];
+    this.favUrl = "https://www.google.com/s2/favicons?domain=" + hostname;
+  } else {
+    this.favUrl = favUrl;
+  }
 }
 
 /**

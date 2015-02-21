@@ -9,7 +9,7 @@ As of now, you can only install this for chrome locally. To do that, enable deve
 ### TODO list
 
 - [x] Ignore empty tabs
-- [ ] Fix favicon when pushed before the site has loaded
+- [x] Fix favicon when pushed before the site has loaded
 - [ ] Allow deleting/opening tabs
 - [x] Allow reordering of Tabs
 - [ ] Add Badge displaying number of items
