@@ -4,7 +4,7 @@
  */
 function getStack(callback){
   chrome.storage.sync.get({stack: null}, function(result){
-    stack = result.stack === null ? {frames: []} : result.stack;
+    stack = result.stack === null ? new Stack([]) : result.stack;
     callback(stack);
   });
 }
@@ -53,6 +53,29 @@ function renderStack(stack){
 }
 
 /**
+ * Constructor for the stack.
+ */
+function Stack(frames){
+  this.frames = frames;
+}
+
+/**
+ * Constructor for objects to represent a set of tabs ("frame").
+ */
+function Frame(tabObjects){
+  this.tabObjects = tabObjects;
+}
+
+/**
+ * Constructor for object to represent a tab.
+ */
+function TabObject(url, title, favUrl){
+  this.url = url;
+  this.title = title;
+  this.favUrl = favUrl;
+}
+
+/**
  * Read frames and tabs, and update them in the stack object.
  * Called, when the user changes the order of the frames or tabs (through drag-and-drop).
  */
@@ -86,7 +109,7 @@ function rebuildStackFromHtml(){
       }
 
       if(tabObjects.length != 0)
-        newFrames.push({tabObjects: tabObjects});
+        newFrames.push(new Frame(tabObjects));
     }
 
     // if something was in the drop area, put it on the stack.
@@ -94,13 +117,13 @@ function rebuildStackFromHtml(){
     if (dropAreaArray.length !== 0){
         var indices = parseTabId(dropAreaArray[0]);
         var f = indices[0]; var t = indices[1];
-        newFrames.push({tabObjects: [stack.frames[f].tabObjects[t]]});
+        newFrames.push(new Frame([stack.frames[f].tabObjects[t]]));
         
         // clear drop area
         $("#drop-area").html("");
     }
 
-    var newStack = {frames: newFrames};
+    var newStack = new Stack(newFrames);
     setStack(newStack, function(){
       renderStack(newStack); // re-rendering wouldn't be necessary, but for now I will leave this in here in case the order was wrong.
     });
@@ -127,20 +150,14 @@ function push(){
     // create objects for each tab, containing url, title, and favicon
     tabs = allTabs.filter(function(tab){return !tabIsEmpty(tab)}); // filter out all empty tabs
     tabObjects = tabs.map(function(tab){
-      return {
-        url: tab.url,
-        title: tab.title,
-        favUrl: tab.favIconUrl
-      }
+      return new TabObject(tab.url, tab.title, tab.favIconUrl);
     });
 
     // place on stack
     getStack(function(stack){
       // Note: "frame" refers to a set of tabs which you move from the current window to the stack and vice versa.
       // Not the best name, I know.
-      frame = {
-        tabObjects: tabObjects 
-      }
+      frame = new Frame(tabObjects);
       stack.frames.push(frame);
       setStack(stack, function(){
         renderStack(stack);
