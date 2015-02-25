@@ -55,8 +55,15 @@ function renderStack(stack){
 
   // pop/close buttons functionality
   $(".tab-pop-button").click(function(){
-    console.log("pop: "+$(this).attr("id"));
-  }); // TODO
+    var id = $(this).attr("id");
+    var fields = id.split("-"); // maybe add some type of check for the format of the id here?
+    popTab(fields[2], fields[4]);
+  });
+  $(".tab-close-button").click(function(){
+    var id = $(this).attr("id");
+    var fields = id.split("-");
+    dropTab(fields[2], fields[4]);
+  });
 
   $("#drop-area").hide(0); // hide drop area
 
@@ -228,7 +235,7 @@ function pop(){
       url: "chrome://newtab/"
     }
     chrome.tabs.query(emptyTabsQueryInfo, function(emptyTabs){  
-      frame = stack.frames.pop();
+      var frame = stack.frames.pop();
       
       // open tabs
       for(var i = 0; i < frame.tabObjects.length; i++){
@@ -243,6 +250,54 @@ function pop(){
       // update stack object
       setStack(stack, function(){
         renderStack(stack);
+      });
+    });
+  });
+}
+
+/**
+ * Delete a tab (identified by frame and tab number) from the stack, re-draw stack, and call callback function if provided.
+ */
+function dropTab(frameIndex, tabIndex, callback){
+  getStack(function(stack){
+    // extract tab from stack
+    var frame = stack.frames[frameIndex];
+    var tab = frame.tabObjects[tabIndex];
+    frame.tabObjects.splice(tabIndex, 1);
+    
+    // if frame is now empty, remove it
+    if (frame.tabObjects.length === 0){
+      stack.frames.splice(frameIndex, 1);
+    }
+    
+    // update stack object
+    setStack(stack, function(){
+      renderStack(stack);
+      if (callback !== undefined) callback();
+    })
+  });
+}
+
+/**
+ * Open a tab from the stack, and delete it from there.
+ */
+function popTab(frameIndex, tabIndex){
+  getStack(function(stack){
+    var tab = stack.frames[frameIndex].tabObjects[tabIndex];
+    dropTab(frameIndex, tabIndex, function(){
+      // clear empty tabs
+      var emptyTabsQueryInfo = {
+        pinned: false,
+        currentWindow: true,
+        url: "chrome://newtab/"
+      }
+      chrome.tabs.query(emptyTabsQueryInfo, function(emptyTabs){  
+        // open tab
+        chrome.tabs.create({url: tab.url, active: true, selected: true});
+
+        emptyTabs.forEach(function(tab){
+          chrome.tabs.remove(tab.id);
+        });
       });
     });
   });
