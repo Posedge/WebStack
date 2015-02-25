@@ -24,14 +24,40 @@ function renderStack(stack){
     elementContent += '<div class="stack-frame" id="frame-' + i + '">';
     for(var j = 0; j < frame.tabObjects.length; j++){
       tab = frame.tabObjects[j];
-      elementContent += '<div class="tab-favicon-container" title="' + tab.title + '" id="frame-' + i + '-tab-' + j + '">';
+      
+      // add container
+      var containerId = 'container-frame-' + i + '-tab-' + j;
+      elementContent += '<div class="tab-favicon-container" id="' + containerId + '" title="' + tab.title + '" id="frame-' + i + '-tab-' + j + '">';
+
+      // add close and pop button
+      var closeId = 'close-frame-' + i + '-tab-' + j;
+      var popId = 'pop-frame-' + i + '-tab-' + j;
+      elementContent += '<div class="tab-close-button" id="' + closeId + '"></div>';
+      elementContent += '<div class="tab-pop-button" id="' + popId + '"></div>';
+
+      // add image
       elementContent += '<img class="tab-favicon-img" src="' + tab.favUrl + '" alt="' + tab.title + '" />';
+
       elementContent += '</div>';
     };
     elementContent += '</div>';
   }
 
   $("#stack").html(elementContent);
+
+  // show pop/close buttons only on mouse over
+  $(".tab-close-button, .tab-pop-button").hide(0);
+  $(".tab-favicon-container").hover(function(){
+    $(this).find(".tab-close-button, .tab-pop-button").show(0);
+  }, function(){
+    $(this).find(".tab-close-button, .tab-pop-button").hide(0);
+  });
+
+  // pop/close buttons functionality
+  $(".tab-pop-button").click(function(){
+    console.log("pop: "+$(this).attr("id"));
+  }); // TODO
+
   $("#drop-area").hide(0); // hide drop area
 
   // these have to be updated (set to sortable) when the stack is rendered, because their content often changes.

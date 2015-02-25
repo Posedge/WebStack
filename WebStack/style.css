@@ -80,6 +80,7 @@ div.stack-frame {
 }
 
 div.tab-favicon-container {
+  position: relative;
   background-color: #E8E8E8;
   display: inline-block;
   border: 2px solid #E8E8E8;
@@ -87,6 +88,28 @@ div.tab-favicon-container {
   width: 48px;
   height: 48px;
   margin: 2px;
+}
+
+.tab-close-button, .tab-pop-button {
+  position: absolute;
+  top: 0px;
+  margin: 3px;
+  width: 10px;
+  height: 10px;
+  border: 2px solid;
+  border-radius: 4px;
+}
+
+.tab-close-button {
+  right: 0px;
+  background: url("close-button.png");
+  background-color: #FF6666;
+}
+
+.tab-pop-button {
+  right: 16px;
+  background: url("pop-button.png");
+  background-color: #FF6666;
 }
 
 img.tab-favicon-img {
