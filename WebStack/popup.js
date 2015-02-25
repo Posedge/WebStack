@@ -119,12 +119,14 @@ function rebuildStackFromHtml(){
    * Parse string with the html id of the tab element, and return an array with the frame and tab index.
    */
   function parseTabId(string){
+    if(string.substring(0, "container".length) !== "container")
+      return null; // only parse container objects
     var id = string.split("-");
-    if(id.length != 4 || id[0] !== "frame" || id[2] !== "tab"){
+    if(id.length != 5 || id[0] !== "container" || id[1] !== "frame" || id[3] !== "tab"){
       console.log("WebStack: Reorder failure!");
       return;
     }
-    return [parseInt(id[1]), parseInt(id[3])];
+    return [parseInt(id[2]), parseInt(id[4])];
   }
 
   // re-build stack in new order.
@@ -137,6 +139,7 @@ function rebuildStackFromHtml(){
       var tabObjects = [];
       for (var j = 0; j < tabsArray.length; j++){
         var indices = parseTabId(tabsArray[j]);
+        if (indices === null) continue;
         var f = indices[0]; var t = indices[1];
         tabObjects.push(stack.frames[f].tabObjects[t]);
       }
@@ -147,13 +150,16 @@ function rebuildStackFromHtml(){
 
     // if something was in the drop area, put it on the stack.
     var dropAreaArray = $("#drop-area").sortable("toArray");
-    if (dropAreaArray.length !== 0){
-        var indices = parseTabId(dropAreaArray[0]);
+    for(var i = 0; i < dropAreaArray.length; i++){
+        var indices = parseTabId(dropAreaArray[i]);
+        if (indices === null) continue;
         var f = indices[0]; var t = indices[1];
         newFrames.push(new Frame([stack.frames[f].tabObjects[t]]));
         
         // clear drop area
         $("#drop-area").html("");
+        
+        break;
     }
 
     var newStack = new Stack(newFrames);
