@@ -27,7 +27,7 @@ function renderStack(stack){
       
       // add container
       var containerId = 'container-frame-' + i + '-tab-' + j;
-      elementContent += '<div class="tab-favicon-container" id="' + containerId + '" title="' + tab.title + '" id="frame-' + i + '-tab-' + j + '">';
+      elementContent += '<div class="tab-favicon-container" id="' + containerId + '" title="' + tab.title + '">';
 
       // add close and pop button
       var closeId = 'close-frame-' + i + '-tab-' + j;
