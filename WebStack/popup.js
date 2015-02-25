@@ -16,8 +16,14 @@ function setStack(stack, callback){
   chrome.storage.sync.set({stack: stack}, callback);
 }
 
+/**
+ * Update html of the stack object from the stack parameter.
+ * Update badge on the extension icon.
+ * Also update jquery bindings for dragging tabs, frames and the drop area and for the pop/close buttons on the tabs.
+ */
 function renderStack(stack){
-  var elementContent = ""; // stack element in html
+  // stack element html
+  var elementContent = ""; 
   // draw stack in reverse order as the last element represents the top
   for(var i = stack.frames.length - 1; i >= 0; i--){
     frame = stack.frames[i];
@@ -42,8 +48,10 @@ function renderStack(stack){
     };
     elementContent += '</div>';
   }
-
   $("#stack").html(elementContent);
+
+  // badge
+  chrome.browserAction.setBadgeText({text: stack.frames.length.toString()});
 
   // show pop/close buttons only on mouse over
   $(".tab-close-button, .tab-pop-button").hide(0);
@@ -212,9 +220,8 @@ function push(){
         chrome.tabs.create({});
 
         // close all other tabs
-        allTabs.forEach(function(tab){
-          chrome.tabs.remove(tab.id);
-        });
+        var allTabIds = allTabs.map(function(tab){return tab.id;});
+        chrome.tabs.remove(allTabIds);
       });
     });
   });  
@@ -242,14 +249,13 @@ function pop(){
         chrome.tabs.create({url: frame.tabObjects[i].url, active: false, selected: false});
       }
       
-      // close empty tabs
-      emptyTabs.forEach(function(tab){
-        chrome.tabs.remove(tab.id);
-      });
-      
       // update stack object
       setStack(stack, function(){
         renderStack(stack);
+
+        // close empty tabs
+        var emptyTabIds = emptyTabs.map(function(tab){return tab.id;});
+        chrome.tabs.remove(emptyTabIds);
       });
     });
   });

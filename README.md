@@ -12,9 +12,12 @@ As of now, you can only install this for chrome locally. To do that, enable deve
 - [x] Fix favicon when pushed before the site has loaded
 - [x] Allow deleting/opening tabs
 - [x] Allow reordering of Tabs
-- [ ] Add Badge displaying number of items
+- [x] Add Badge displaying number of items
+- [ ] Add global keybinding for push/pop
 - [ ] Save and restore the browsing history with the tab
 - [ ] Fix issue where loading pages block opening of the popup
 - [ ] Add proper icon(s) and stylesheets, and fix css disasters
+  - [ ] Add delete/open buttons to frames (need space first)
+  - [ ] Increase size of drop area
 - [ ] Make this more accessible to the average user (rename "push" and "pop" and rewrite the description)
 
