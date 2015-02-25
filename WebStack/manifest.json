@@ -10,11 +10,26 @@
     "default_popup": "popup.html",
     "default_title": "Tabs on Stack"
   },
+  "background": {
+    "scripts": ["stack.js", "background.js"]
+  },
   "permissions": [
     "tabs",
     "activeTab",
     "https://ajax.googleapis.com/",
     "storage"
   ],
-  "content_security_policy": "script-src 'self' https://ajax.googleapis.com; object-src 'self'"
+  "content_security_policy": "script-src 'self' https://ajax.googleapis.com; object-src 'self'",
+  "commands": {
+    "push-tabs": {
+      "suggested_key": {"default": "Alt+Shift+C"},
+      "description": "Clear window, and place tabs on the stack.",
+      "global": "false"
+    },
+    "pop-tabs": {
+      "suggested_key": {"default": "Alt+Shift+D"},
+      "description": "Restore top set of tabs on the stack in the current window.",
+      "global": "false"
+    }
+  }
 }
