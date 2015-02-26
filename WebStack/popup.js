@@ -54,20 +54,33 @@ function renderStack(stack){
     port.postMessage({type: "drop-tab", frame: fields[2], tab: fields[4]});
   });
 
-  $("#drop-area").hide(0); // hide drop area
+  // functions to replace the push button with the drop area when dragging a tab and vice versa
+  function switchToPushButton(){
+    $("#drop-area").hide(0);
+    $("#push-button").show(0);
+    $("#pop-button").fadeTo(0, 1);
+  }
+  function switchToDropArea(){
+    $("#drop-area").show(0);
+    $("#push-button").hide(0);
+    $("#pop-button").fadeTo(0, 0.5);
+  }
+  switchToPushButton();
 
   // these have to be updated (set to sortable) when the stack is rendered, because their content often changes.
   $("#stack").sortable({
-    update: rebuildStackFromHtml
+    update: rebuildStackFromHtml,
+    placeholder: "stack-frame-placeholder"
   });
   $(".stack-frame").sortable({
     connectWith: ".stack-frame, #drop-area",
+    start: switchToDropArea,
     stop: rebuildStackFromHtml,
-    start: function(){$("#drop-area").show(0);}
+    placeholder: "tab-favicon-container-placeholder",
+    forcePlaceholderSize: true
   });
   $("#drop-area").sortable({
     connectWith: ".stack-frame, #drop-area",
-    start: function(){$("#drop-area").show(0);}
   });
   $("#drop-area").disableSelection();
   $(".stack-frame").disableSelection();
