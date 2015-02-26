@@ -5,8 +5,13 @@
     <script type="text/javascript" src="jquery-2.1.3.min.js"></script>
     <script type="text/javascript" src="jquery-ui-1.11.3/jquery-ui.js"></script>
     <script type="text/javascript" src="popup.js"></script>
+		<script type="text/javascript" src="preview.js"></script>
   </head>
   <body>
+		<div id="preview">
+			<iframe sandbox="allow-same-origin allow-scripts allow-top-navigation" id="preview-frame" frameBorder="0" src=""></iframe>
+			<canvas id="previewCanvas"></canvas>
+		</div>
     <button id="push-button" class="button">Push</button>
     <button id="pop-button" class="button">Pop</button>
     <div id="drop-area"></div>
