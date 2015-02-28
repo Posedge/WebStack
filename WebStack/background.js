@@ -49,6 +49,7 @@ chrome.extension.onConnect.addListener(function(port) {
         break;
       default:
         console.log("Unknown message type: " + msg.type);
+				console.log(msg);
     }
   });
   port.onDisconnect.addListener(function(){window.port = undefined;});
@@ -65,6 +66,5 @@ function sendToPopup(object){
  * If a connection to the popup is established, send a message.
  */
 function trySendToPopup(object){
-  if (port !== undefined) sendToPopup(object);
+	if (port !== undefined) sendToPopup(object);
 }
-

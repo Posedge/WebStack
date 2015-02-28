@@ -1,3 +1,5 @@
+//Runs in background
+
 /**
  * Constructor for the stack.
  */
@@ -15,7 +17,8 @@ function Frame(tabObjects){
 /**
  * Constructor for object to represent a tab.
  */
-function TabObject(url, title, favUrl){
+function TabObject(id, url, title, favUrl){
+	this.id = id;
   this.url = url;
   this.title = title;
   if (favUrl === undefined) {
@@ -45,7 +48,18 @@ function getStack(callback){
 function setStack(stack, callback){
   chrome.storage.sync.set({stack: stack}, callback);
 }
-
+function parseTabId(string, prefix){
+	if(prefix === undefined)
+		prefix = "container";	
+  if(string.substring(0, prefix.length) !== prefix)
+		return null; // only parse container objects
+	var id = string.split("-");
+	if(id.length != 5 || id[0] !== prefix || id[1] !== "frame" || id[3] !== "tab"){
+		console.log("WebStack: Reorder failure!");
+		return;
+	}
+	return [parseInt(id[2]), parseInt(id[4])];
+}
 /**
  * Replace the stack with a new one, with the new order passed through the array parameters.
  */
@@ -53,16 +67,6 @@ function rebuildStack(framesArray, tabsArrays, dropAreaArray){
   /**
    * Parse string with the html id of the tab element, and return an array with the frame and tab index.
    */
-  function parseTabId(string){
-    if(string.substring(0, "container".length) !== "container")
-      return null; // only parse container objects
-    var id = string.split("-");
-    if(id.length != 5 || id[0] !== "container" || id[1] !== "frame" || id[3] !== "tab"){
-      console.log("WebStack: Reorder failure!");
-      return;
-    }
-    return [parseInt(id[2]), parseInt(id[4])];
-  }
 
   // re-build stack in new order.
   getStack(function(stack){
@@ -89,7 +93,6 @@ function rebuildStack(framesArray, tabsArrays, dropAreaArray){
         if (indices === null) continue;
         var f = indices[0]; var t = indices[1];
         newFrames.push(new Frame([stack.frames[f].tabObjects[t]]));
-        
         break;
     }
 
@@ -121,8 +124,9 @@ function push(){
 
     // create objects for each tab, containing url, title, and favicon
     tabs = allTabs.filter(function(tab){return !tabIsEmpty(tab)}); // filter out all empty tabs
+		bkg.console.log(tabs);
     tabObjects = tabs.map(function(tab){
-      return new TabObject(tab.url, tab.title, tab.favIconUrl);
+      return new TabObject(tab.id, tab.url, tab.title, tab.favIconUrl);
     });
 
     // place on stack
@@ -240,6 +244,7 @@ function popTab(frameIndex, tabIndex){
  * Delete the stack. As of now, only for debugging purposes.
  */
 function del(){
+	chrome.storage.local.remove("pictures");
   chrome.storage.sync.remove("stack");
 }
 

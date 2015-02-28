@@ -1,5 +1,3 @@
-
-
 /**
  * Update html of the stack object from the stack parameter.
  * Update badge on the extension icon.
@@ -36,11 +34,42 @@ function renderStack(stack){
 
   // show pop/close buttons only on mouse over
   $(".tab-close-button, .tab-pop-button").hide(0);
-  $(".tab-favicon-container").hover(function(){
+	var timer;
+  $(".tab-favicon-container").hover(function(e){
     $(this).find(".tab-close-button, .tab-pop-button").show(0);
+		//get the tab id
+		var id =$(this).find(".tab-close-button").first().attr("id"); 
+		var fields = id.split("-");
+		var tabId = stack.frames[fields[2]].tabObjects[fields[4]].id;
+		//go and get the picture for the tabid!
+		//TODO: Do this the nice valentinish way...
+		var picture, pictures;
+		if(previewEnabled){
+			var dummyThis=this;
+			chrome.storage.local.get({pictures: null}, function(result){
+				pictures = result.pictures == null ? [] : result.pictures;
+				picture = pictures[tabId];
+				previewPos(e, dummyThis);
+				drawPicture(picture);
+				timer=setTimeout(function(){
+				$("#preview").fadeIn(200);	
+					}, previewDelay);
+				});
+		}
   }, function(){
     $(this).find(".tab-close-button, .tab-pop-button").hide(0);
+		clearTimeout(timer);
+		$("#preview").hide();
   });
+
+	//Makes sure that the preview closes as soon as we want to move stuff around or anything
+	$(".tab-favicon-img").mousedown(function(){
+	  previewEnabled = false;	
+		$("#preview").hide();
+		clearTimeout(timer);
+		});
+	$(".tab-favicon-img").mouseup(function(){
+		previewEnabled = true;});
 
   // pop/close buttons functionality
   $(".tab-pop-button").click(function(){
@@ -63,11 +92,15 @@ function renderStack(stack){
   $(".stack-frame").sortable({
     connectWith: ".stack-frame, #drop-area",
     stop: rebuildStackFromHtml,
-    start: function(){$("#drop-area").show(0);}
+    start: function(){
+			$("#drop-area").show(0);
+			}
   });
   $("#drop-area").sortable({
     connectWith: ".stack-frame, #drop-area",
-    start: function(){$("#drop-area").show(0);}
+    start: function(){
+			$("#drop-area").show(0);
+		}
   });
   $("#drop-area").disableSelection();
   $(".stack-frame").disableSelection();
@@ -106,7 +139,7 @@ document.addEventListener('DOMContentLoaded', function(){
         renderStack(msg.stack);
         break;
       default:
-        console.log("Unknown message type: " + msg.type);
+        console.log("Unknown message type: " + msg.type).id;
     }
   });
 

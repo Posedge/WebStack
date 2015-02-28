@@ -117,10 +117,12 @@ img.tab-favicon-img {
   height: 100%;
 }
 #preview{
+	box-shadow: 0 0 10px rgba(0,0,0,0.85);
+	border-radius: 3px;
 	display:none;
 	position:fixed;
 	z-index:2;
-	background-color:green;
+	background-color:black;
 	margin:0;
 	padding:0;
 }
