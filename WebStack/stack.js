@@ -172,17 +172,24 @@ function popAndReplace(){
 }
 
 /**
- * Pop top stack frame, and put tabs in current window.
+ * Pop stack frame nr. frameIndex (or top stack frame if frameIndex is undefined),
+ * and put tabs in current window.
  * Additionaly, close all tabs matching the tabsQueryInfo object.
  */
-function popAndCloseTabs(tabsQueryInfo){
+function popAndCloseTabs(tabsQueryInfo, frameIndex){
   getStack(function(stack){
     if (stack.frames.length == 0){
       return; // stack is empty.
     }
 
     chrome.tabs.query(tabsQueryInfo, function(theTabs){  
-      var frame = stack.frames.pop();
+      var frame;
+      if (frameIndex === undefined){
+        frame = stack.frames.pop();
+      } else {
+        frame = stack.frames[frameIndex];
+        stack.frames.splice(frameIndex, 1);
+      }
       
       // open tabs
       for(var i = 0; i < frame.tabObjects.length; i++){
@@ -193,7 +200,7 @@ function popAndCloseTabs(tabsQueryInfo){
       setStack(stack, function(){
         trySendToPopup({type: "render-stack", stack: stack});
 
-        // close empty tabs
+        // close desired tabs
         var tabIds = theTabs.map(function(tab){return tab.id;});
         chrome.tabs.remove(tabIds);
       });
@@ -253,6 +260,35 @@ function popTab(frameIndex, tabIndex){
       });
     });
   });
+}
+
+/**
+ * Delete a frame from the stack, then call callback if provided.
+ */
+function dropFrame(frameIndex){
+  getStack(function(stack){
+    stack.frames.splice(frameIndex, 1);
+    
+    // update stack object
+    setStack(stack, function(){
+      sendToPopup({type: "render-stack", stack: stack});
+    })
+    
+    // badge
+    updateBadge(stack);
+  });
+}
+
+/**
+ * Pop frame nr. frameIndex from the stack.
+ */
+function popFrame(frameIndex){
+  var emptyTabsQueryInfo = {
+    pinned: false,
+    currentWindow: true,
+    url: "chrome://newtab/"
+  }
+  popAndCloseTabs(emptyTabsQueryInfo, frameIndex);
 }
 
 /**

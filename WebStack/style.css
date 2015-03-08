@@ -39,6 +39,7 @@ body {
 }
 
 div.stack-frame {
+  position: relative;
   width: 336px;
   min-height: 56px;
   margin: 5px;
@@ -66,6 +67,11 @@ div.tab-favicon-container {
   margin: 2px;
 }
 
+img.tab-favicon-img {
+  width: 100%;
+  height: 100%;
+}
+
 div.tab-favicon-container-placeholder {
   display: inline-block;
   position: relative;
@@ -77,14 +83,17 @@ div.tab-favicon-container-placeholder {
   margin: 2px;
 }
 
-.tab-close-button, .tab-pop-button {
+.tab-close-button, .tab-pop-button, .frame-close-button, .frame-pop-button {
   position: absolute;
-  top: 0px;
   margin: 3px;
   width: 10px;
   height: 10px;
   border: 2px solid;
   border-radius: 4px;
+}
+
+.tab-close-button, .tab-pop-button {
+  top: 0px;
 }
 
 .tab-close-button {
@@ -99,8 +108,19 @@ div.tab-favicon-container-placeholder {
   background-color: #FF6666;
 }
 
-img.tab-favicon-img {
-  width: 100%;
-  height: 100%;
+.frame-close-button, .frame-pop-button {
+  top: -10px;
+}
+
+.frame-close-button {
+  right: -10px;
+  background: url("tab-close-button.png");
+  background-color: #FF9933;
+}
+
+.frame-pop-button {
+  right: 6px;
+  background: url("tab-pop-button.png");
+  background-color: #FF9933;
 }
 

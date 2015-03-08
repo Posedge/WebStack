@@ -3,7 +3,7 @@
 /**
  * Update html of the stack object from the stack parameter.
  * Update badge on the extension icon.
- * Also update jquery bindings for dragging tabs, frames and the drop area and for the pop/close buttons on the tabs.
+ * Also update jquery bindings for dragging tabs, frames and the drop area and for the pop/close buttons on the tabs and frames.
  */
 function renderStack(stack){
   // stack element html
@@ -19,7 +19,7 @@ function renderStack(stack){
       var containerId = 'container-frame-' + i + '-tab-' + j;
       elementContent += '<div class="tab-favicon-container" id="' + containerId + '" title="' + tab.title + '">';
 
-      // add close and pop button
+      // add close and pop button for the tab
       var closeId = 'close-frame-' + i + '-tab-' + j;
       var popId = 'pop-frame-' + i + '-tab-' + j;
       elementContent += '<div class="tab-close-button" id="' + closeId + '"></div>';
@@ -30,19 +30,31 @@ function renderStack(stack){
 
       elementContent += '</div>';
     };
+    // add close and pop button for the frame
+    var closeFrameId = 'close-frame-' + i;
+    var popFrameId = 'pop-frame-' + i;
+    elementContent += '<div class="frame-close-button" id="' + closeId + '"></div>';
+    elementContent += '<div class="frame-pop-button" id="' + popId + '"></div>';
+
     elementContent += '</div>';
   }
   $("#stack").html(elementContent);
 
-  // show pop/close buttons only on mouse over
+  // show pop/close buttons on frames and tabs only on mouse over
   $(".tab-close-button, .tab-pop-button").hide(0);
   $(".tab-favicon-container").hover(function(){
     $(this).find(".tab-close-button, .tab-pop-button").show(0);
   }, function(){
     $(this).find(".tab-close-button, .tab-pop-button").hide(0);
   });
+  $(".frame-close-button, .frame-pop-button").hide(0);
+  $(".stack-frame").hover(function(){
+    $(this).find(".frame-close-button, .frame-pop-button").show(0);
+  }, function(){
+    $(this).find(".frame-close-button, .frame-pop-button").hide(0);
+  });
 
-  // pop/close buttons functionality
+  // pop/close buttons on frames and tabs functionality
   $(".tab-pop-button").click(function(){
     var id = $(this).attr("id");
     var fields = id.split("-"); // maybe add some type of check for the format of the id here?
@@ -52,6 +64,16 @@ function renderStack(stack){
     var id = $(this).attr("id");
     var fields = id.split("-");
     port.postMessage({type: "drop-tab", frame: fields[2], tab: fields[4]});
+  });
+  $(".frame-pop-button").click(function(){
+    var id = $(this).attr("id");
+    var fields = id.split("-"); // maybe add some type of check for the format of the id here?
+    port.postMessage({type: "pop-frame", frame: fields[2]});
+  });
+  $(".frame-close-button").click(function(){
+    var id = $(this).attr("id");
+    var fields = id.split("-");
+    port.postMessage({type: "drop-frame", frame: fields[2]});
   });
 
   // functions to replace the push button with the drop area when dragging a tab and vice versa
@@ -73,6 +95,7 @@ function renderStack(stack){
     placeholder: "stack-frame-placeholder"
   });
   $(".stack-frame").sortable({
+    items: ".tab-favicon-container", // exclude close/pop buttons
     connectWith: ".stack-frame, #drop-area",
     start: switchToDropArea,
     stop: rebuildStackFromHtml,

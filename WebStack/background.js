@@ -50,6 +50,12 @@ chrome.extension.onConnect.addListener(function(port) {
       case "drop-tab":
         dropTab(msg.frame, msg.tab);
         break;
+      case "pop-frame":
+        popFrame(msg.frame);
+        break;
+      case "drop-frame":
+        dropFrame(msg.frame);
+        break;
       default:
         console.log("Unknown message type: " + msg.type);
     }
