@@ -149,20 +149,39 @@ function push(){
 }
 
 /**
- * Pop last stack frame, and place tabs in current window.
+ * Pop top stack frame, and place tabs in current window.
  */
 function pop(){
+  var emptyTabsQueryInfo = {
+    pinned: false,
+    currentWindow: true,
+    url: "chrome://newtab/"
+  }
+  popAndCloseTabs(emptyTabsQueryInfo);
+}
+
+/**
+ * Replace current tabs with top frame on stack.
+ */
+function popAndReplace(){
+  var allTabsQueryInfo = {
+    pinned: false,
+    currentWindow: true
+  }
+  popAndCloseTabs(allTabsQueryInfo);
+}
+
+/**
+ * Pop top stack frame, and put tabs in current window.
+ * Additionaly, close all tabs matching the tabsQueryInfo object.
+ */
+function popAndCloseTabs(tabsQueryInfo){
   getStack(function(stack){
     if (stack.frames.length == 0){
       return; // stack is empty.
     }
 
-    var emptyTabsQueryInfo = {
-      pinned: false,
-      currentWindow: true,
-      url: "chrome://newtab/"
-    }
-    chrome.tabs.query(emptyTabsQueryInfo, function(emptyTabs){  
+    chrome.tabs.query(tabsQueryInfo, function(theTabs){  
       var frame = stack.frames.pop();
       
       // open tabs
@@ -175,8 +194,8 @@ function pop(){
         trySendToPopup({type: "render-stack", stack: stack});
 
         // close empty tabs
-        var emptyTabIds = emptyTabs.map(function(tab){return tab.id;});
-        chrome.tabs.remove(emptyTabIds);
+        var tabIds = theTabs.map(function(tab){return tab.id;});
+        chrome.tabs.remove(tabIds);
       });
 
       // badge

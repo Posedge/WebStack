@@ -24,12 +24,17 @@
     "push-tabs": {
       "suggested_key": {"default": "Alt+Shift+C"},
       "description": "Clear window, and place tabs on the stack.",
-      "global": "false"
+      "global": false
     },
     "pop-tabs": {
       "suggested_key": {"default": "Alt+Shift+D"},
       "description": "Restore top set of tabs on the stack in the current window.",
-      "global": "false"
+      "global": false
+    },
+    "replace-tabs":{
+      "suggested_key": {"default": "Alt+Shift+E"},
+      "description": "Replace tabs in current window with top set of tabs on the stack.",
+      "global": false
     }
   }
 }

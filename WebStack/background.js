@@ -8,6 +8,9 @@ chrome.commands.onCommand.addListener(function(cmd){
     case "pop-tabs":
       pop();
       break;
+    case "replace-tabs":
+      popAndReplace();
+      break;
     default:
       console.log("Unknown command: " + cmd);
   }
