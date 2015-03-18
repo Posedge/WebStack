@@ -20,7 +20,7 @@ There are some default keybindings to open/close/replace tabs. You can view and 
 - [ ] Add proper icon(s) and stylesheets, and fix css disasters
   - [x] Add delete/open buttons to frames (need space first)
   - [ ] Fix bug where tabs refuse to get dropped in the drop area
-  - [ ] Fix an issue where tab icons or their placeholders seem to randomly change size when being dragged around
+  - [x] Fix an issue where tab icons or their placeholders seem to randomly change size when being dragged around
 - [ ] Make this more accessible to the average user (rewrite the description, maybe publish this in the chrome web store)
 
 ### License

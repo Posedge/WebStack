@@ -3,12 +3,16 @@ body {
   font-size: 100%;
 }
 
+/* buttons and drop-area on top */
+
 #buttons {
   text-align: center;
+  display: table;
+  margin: 0 auto;
 }
 
 .button, #drop-area {
-  display: inline-block;
+  float: left;
   position: relative;
   width: 64px;
   height: 64px;
@@ -16,7 +20,6 @@ body {
   padding: 0px;
   border: 2px solid;
   border-radius: 5px;
-  background-color: #E8E8E8;
 }
 
 #drop-area {
@@ -38,26 +41,42 @@ body {
   padding: 3px;
 }
 
-div.stack-frame {
-  position: relative;
+/* frames and placeholders */
+
+div.stack-frame, div.stack-frame-placeholder {
   width: 336px;
-  min-height: 56px;
   margin: 5px;
-  border: 2px solid;
   border-radius: 5px;
+  float: left;
+}
+
+div.stack-frame {
+  min-height: 56px;
+  border: 2px solid;
+  position: relative;
 }
 
 div.stack-frame-placeholder {
-  width: 336px;
   height: 56px;
-  margin: 5px;
   border: 2px solid #E8E8E8;
-  border-radius: 5px;
   background: #E8E8E8;
 }
 
+/* tabs and placeholders */
+
 div.tab-favicon-container {
-  display: inline-block;
+  float: left;
+  position: relative;
+  border: 2px solid #E8E8E8;
+  border-radius: 8px;
+  background-color: #E8E8E8;
+  width: 48px;
+  height: 48px;
+  margin: 2px;
+}
+
+div.tab-favicon-container-placeholder {
+  float: left;
   position: relative;
   border: 2px solid #E8E8E8;
   border-radius: 8px;
@@ -72,17 +91,9 @@ img.tab-favicon-img {
   height: 100%;
 }
 
-div.tab-favicon-container-placeholder {
-  display: inline-block;
-  position: relative;
-  border: 2px solid #E8E8E8;
-  border-radius: 8px;
-  background-color: #E8E8E8;
-  width: 48px;
-  height: 48px;
-  margin: 2px;
-}
+/* close buttons for tabs and frames */
 
+/* all buttons */
 .tab-close-button, .tab-pop-button, .frame-close-button, .frame-pop-button {
   position: absolute;
   margin: 3px;
@@ -92,6 +103,7 @@ div.tab-favicon-container-placeholder {
   border-radius: 4px;
 }
 
+/* red buttons */
 .tab-close-button, .tab-pop-button {
   top: 0px;
 }
@@ -108,6 +120,7 @@ div.tab-favicon-container-placeholder {
   background-color: #FF6666;
 }
 
+/* orange buttons */
 .frame-close-button, .frame-pop-button {
   top: -10px;
 }

@@ -92,18 +92,15 @@ function renderStack(stack){
   // these have to be updated (set to sortable) when the stack is rendered, because their content often changes.
   $("#stack").sortable({
     update: rebuildStackFromHtml,
-    placeholder: "stack-frame-placeholder"
+    placeholder: "stack-frame-placeholder",
+    axis: "y"
   });
-  $(".stack-frame").sortable({
+  $(".stack-frame, #drop-area").sortable({
     items: ".tab-favicon-container", // exclude close/pop buttons
     connectWith: ".stack-frame, #drop-area",
     start: switchToDropArea,
     stop: rebuildStackFromHtml,
     placeholder: "tab-favicon-container-placeholder",
-    forcePlaceholderSize: true
-  });
-  $("#drop-area").sortable({
-    connectWith: ".stack-frame, #drop-area",
   });
   $("#drop-area").disableSelection();
   $(".stack-frame").disableSelection();
