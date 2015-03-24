@@ -6,14 +6,17 @@ body {
 /* buttons and drop-area on top */
 
 #buttons {
-  text-align: center;
   display: table;
   margin: 0 auto;
+  overflow: hidden;
+}
+
+.button {
+  display: none;
 }
 
 .button, #drop-area {
   float: left;
-  position: relative;
   width: 64px;
   height: 64px;
   margin: 5px;

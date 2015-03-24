@@ -78,16 +78,19 @@ function renderStack(stack){
 
   // functions to replace the push button with the drop area when dragging a tab and vice versa
   function switchToPushButton(){
-    $("#drop-area").hide(0);
+    // hide manually to avoid changing the element style, which interleaves with the sortable
+    // do not leave a space, though
+    $("#drop-area").css("visibility", "hidden");
+    $("#drop-area").css("position", "absolute");
     $("#push-button").show(0);
     $("#pop-button").fadeTo(0, 1);
   }
   function switchToDropArea(){
-    $("#drop-area").show(0);
+    $("#drop-area").css("visibility", "visible");
+    $("#drop-area").css("position", "static");
     $("#push-button").hide(0);
     $("#pop-button").fadeTo(0, 0.5);
   }
-  switchToPushButton();
 
   // these have to be updated (set to sortable) when the stack is rendered, because their content often changes.
   $("#stack").sortable({
@@ -102,9 +105,9 @@ function renderStack(stack){
     stop: rebuildStackFromHtml,
     placeholder: "tab-favicon-container-placeholder",
   });
-  $("#drop-area").disableSelection();
-  $(".stack-frame").disableSelection();
-  $(".tab-favicon-container").disableSelection();
+  $("#drop-area, .stack-frame, .tab-favicon-container").disableSelection();
+
+  switchToPushButton();
 }
 
 /**
