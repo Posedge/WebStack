@@ -103,6 +103,13 @@ function rebuildStack(framesArray, tabsArrays, dropAreaArray){
 };
 
 /**
+ * Returns true iff a tab is a newly opened tab.
+ */
+function tabIsEmpty(tab){
+  return tab.url === "chrome://newtab/"
+};
+
+/**
  * Push all opened and non-pinned tabs in this window to our stack.
  */
 function push(){
@@ -112,7 +119,6 @@ function push(){
     currentWindow: true
   }
   chrome.tabs.query(queryInfo, function(allTabs){
-    function tabIsEmpty(tab){return tab.url === "chrome://newtab/"};
 
     // if no tab is opened, or all tabs are empty, do not do anything
     if (allTabs.length === 0 || allTabs.every(tabIsEmpty)){
@@ -172,28 +178,37 @@ function popAndReplace(){
 }
 
 /**
- * Pop stack frame nr. frameIndex (or top stack frame if frameIndex is undefined),
+ * If stack is not empty, pop stack frame nr. frameIndex (or top stack frame if frameIndex is undefined),
  * and put tabs in current window.
  * Additionaly, close all tabs matching the tabsQueryInfo object.
  */
 function popAndCloseTabs(tabsQueryInfo, frameIndex){
   getStack(function(stack){
-    if (stack.frames.length == 0){
-      return; // stack is empty.
-    }
-
     chrome.tabs.query(tabsQueryInfo, function(theTabs){  
       var frame;
-      if (frameIndex === undefined){
-        frame = stack.frames.pop();
+      if (stack.frames.length == 0){
+        // open a new tab to start browsing
+        if(theTabs.length != 1 || !tabIsEmpty(theTabs[0])){
+          chrome.tabs.create({
+            url: "chrome://newtab/",
+            active: true,
+            selected: true
+          });
+        } else {
+          return;
+        }
       } else {
-        frame = stack.frames[frameIndex];
-        stack.frames.splice(frameIndex, 1);
-      }
-      
-      // open tabs
-      for(var i = 0; i < frame.tabObjects.length; i++){
-        chrome.tabs.create({url: frame.tabObjects[i].url, active: false, selected: false});
+        if (frameIndex === undefined){
+          frame = stack.frames.pop();
+        } else {
+          frame = stack.frames[frameIndex];
+          stack.frames.splice(frameIndex, 1);
+        }
+        
+        // open tabs
+        for(var i = 0; i < frame.tabObjects.length; i++){
+          chrome.tabs.create({url: frame.tabObjects[i].url, active: false, selected: false});
+        }
       }
       
       // update stack object
