@@ -14,7 +14,7 @@ There are some default keybindings to open/close/replace tabs. You can view and 
 - [x] Allow deleting/opening tabs and frames
 - [x] Allow reordering of Tabs
 - [x] Add Badge displaying number of items on stack
-- [x] Add keybinding for push/pop
+- [x] Add keybinding for push/pop/pop-and-replace
 - [ ] Save and restore the browsing history with the tab
 - [ ] Fix issue where loading pages block opening of the popup
 - [ ] Add proper icon(s) and stylesheets, and fix css disasters

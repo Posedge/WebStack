@@ -64,6 +64,16 @@ chrome.extension.onConnect.addListener(function(port) {
 });
 
 /**
+ * On loading the extension
+ */
+document.addEventListener('DOMContentLoaded', function(){
+  // display badge
+  getStack(function(stack){
+    updateBadge(stack);
+  });
+})
+
+/**
  * Send a message to the popup.
  */
 function sendToPopup(object){
